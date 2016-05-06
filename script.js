@@ -1,9 +1,9 @@
 var app = angular.module('myApp', []);
-app.factory('dataFactory', function () {
+app.factory('DataFactory', function () {
     var oData = {bStopLoad: false, bLoad: false, aData: []};
     return oData;
 });
-app.controller('contactCtrl', ['$scope', '$http', 'dataFactory', function ($scope, $http, dataFactory) {
+app.controller('contactCtrl', ['$scope', '$http', 'DataFactory', function ($scope, $http, DataFactory) {
     $scope.oContact = {
         firstName: '',
         lastName: '',
@@ -21,28 +21,28 @@ app.controller('contactCtrl', ['$scope', '$http', 'dataFactory', function ($scop
         sTel = $scope.oContact.telephone;
 
         if (sFn.length + sLn.length + sTel.length !== 0) {
-            dataFactory.bStopLoad = true;
+            DataFactory.bStopLoad = true;
         }
         else {
-            dataFactory.bStopLoad = false;
+            DataFactory.bStopLoad = false;
         }
 
         if ((sFn.length + sLn.length + sTel.length !== 0 && !bFlag)
-            || (dataFactory.bLoad)) {
-            dataFactory.aData.unshift($scope.oContact);
+            || (DataFactory.bLoad)) {
+            DataFactory.aData.unshift($scope.oContact);
             bFlag = true;
-            dataFactory.bLoad = false;
+            DataFactory.bLoad = false;
             bConfirm = false;
         }
-        else if (sFn.length + sLn.length + sTel.length === 0 && bFlag && !bConfirm && !dataFactory.bLoad) {
-            dataFactory.aData.shift($scope.oContact);
+        else if (sFn.length + sLn.length + sTel.length === 0 && bFlag && !bConfirm && !DataFactory.bLoad) {
+            DataFactory.aData.shift($scope.oContact);
             bFlag = false;
         }
     }, true);
     $scope.toList = function () {
-        if (sFn.length !== 0 && sLn.length !== 0 && sTel.length !== 0 && !bConfirm && !dataFactory.bLoad) {
-            dataFactory.aData.shift($scope.oContact);
-            dataFactory.aData.unshift({firstName: sFn, lastName: sLn, telephone: sTel});
+        if (sFn.length !== 0 && sLn.length !== 0 && sTel.length !== 0 && !bConfirm && !DataFactory.bLoad) {
+            DataFactory.aData.shift($scope.oContact);
+            DataFactory.aData.unshift({firstName: sFn, lastName: sLn, telephone: sTel});
             bFlag = false;
             bConfirm = true;
             $scope.$apply(function () {
@@ -87,8 +87,8 @@ app.controller('contactCtrl', ['$scope', '$http', 'dataFactory', function ($scop
         }
     });
 
-app.controller('listCtrl', ['$scope', '$http', 'dataFactory', function ($scope, $http, dataFactory) {
-    $scope.aList = dataFactory.aData;
+app.controller('listCtrl', ['$scope', '$http', 'DataFactory', function ($scope, $http, DataFactory) {
+    $scope.aList = DataFactory.aData;
 }])
     .directive('contactList', function () {
         return {
@@ -122,15 +122,13 @@ app.controller('listCtrl', ['$scope', '$http', 'dataFactory', function ($scope, 
         return {
             restrict: 'E',
             replace: true,
-            controller: ['$scope', 'dataFactory', '$http', function ($scope, dataFactory, $http) {
+            controller: ['$scope', 'DataFactory', '$http', function ($scope, DataFactory, $http) {
                 $scope.loadList = function (evt) {
-                    console.log(dataFactory.bStopLoad);
-
-                    if (dataFactory.bStopLoad) {
+                    if (DataFactory.bStopLoad) {
                         alert('please clear the input!');
                     }
                     else {
-                        dataFactory.bLoad = true;
+                        DataFactory.bLoad = true;
                         $http.get('./contactList.json').then(function (resp) {
                             var result = resp.data;
                             if (result.success) {
@@ -138,8 +136,6 @@ app.controller('listCtrl', ['$scope', '$http', 'dataFactory', function ($scope, 
                                 angular.forEach(result.contacts, function (val) {
                                     $scope.aList.push(val);
                                 });
-                                //        $scope.aList = result.contacts;
-                                dataFactory.aData = $scope.aList;
                             }
                             else {
                                 alert('failed');
