@@ -32,7 +32,6 @@ legend {
     text-shadow: 1px 1px 0px #fff;
 }
 
-
 button {
     border: 1px solid #423021;
     background-color: #063489;
@@ -85,6 +84,11 @@ table td {
     height: 25px;
     width: 120px;
     text-align: left;
+}
+
+.search {
+    margin: 10px 90px;
+    border: 1px solid #2B3875;
 }
 
 .even {
