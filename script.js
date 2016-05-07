@@ -62,7 +62,6 @@ app.controller('contactCtrl', ['$scope', '$http', 'DataFactory', function ($scop
                     'margin-bottom': '10px',
                 }
             },
-            //   controllerAs :
             replace: true,
             template: '<form name="ctForm">',
             compile: function (iElem, iAttrs) {
@@ -72,7 +71,7 @@ app.controller('contactCtrl', ['$scope', '$http', 'DataFactory', function ($scop
                     .append('<div ng-show="ctForm.ln.$error.pattern" ng-style="oErr">Please input the letters!</div><br>')
                     .append('Telephone &nbsp&nbsp&nbsp <input type="tel" name="tel" ng-model="oContact.telephone" ng-class="{err: ctForm.tel.$invalid}" maxlength="10" ng-pattern="/^[0-9]*$/" placeholder="telephone"><br>')
                     .append('<div ng-show="ctForm.tel.$error.pattern" ng-style="oErr">Please input the number!</div><br>')
-                    .append('<to-list></to-list>')
+                    .append('<to-list tmp="toList()"></to-list>')
             }
         }
     })
@@ -80,9 +79,12 @@ app.controller('contactCtrl', ['$scope', '$http', 'DataFactory', function ($scop
         return {
             restrict: 'E',
             replace: true,
+            scope: {
+                tmp: '&'
+            },
             template: '<button type="button">Confirm</button>',
             link: function (scope, iElem, iAttrs) {
-                iElem.on('click', scope.toList);
+                iElem.on('click', scope.tmp);
             }
         }
     });
@@ -132,7 +134,7 @@ app.controller('listCtrl', ['$scope', '$http', 'DataFactory', function ($scope, 
                         $http.get('./contactList.json').then(function (resp) {
                             var result = resp.data;
                             if (result.success) {
-                                angular.element(evt.target).attr('disabled',"true").css('backgroundColor','grey');
+                                angular.element(evt.target).attr('disabled', "true").css('backgroundColor', 'grey');
                                 angular.forEach(result.contacts, function (val) {
                                     $scope.aList.push(val);
                                 });
