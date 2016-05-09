@@ -1,10 +1,7 @@
 var app = angular.module('myApp', []);
 app.factory('DataFactory', ['$http', '$q', function ($http, $q) {
-    var oData = {
-        bStopLoad: false,
-        bLoad: false,
-        bFlag: true,
-        bConfirm: false,
+    var data = {
+        flag: [false, false, false, false],
         aData: [],
         loadData: function () {
             return $q(function (resolve, reject) {
@@ -22,34 +19,9 @@ app.factory('DataFactory', ['$http', '$q', function ($http, $q) {
             })
         }
     };
-    return oData;
+    return data;
 }])
-app.controller('contactCtrl', ['$scope', 'DataFactory', function ($scope, DataFactory) {
-    $scope.oContact = {
-        firstName: '',
-        lastName: '',
-        telephone: ''
-    };
-    $scope.$watch('oContact', function () {
-        if ($scope.oContact.firstName.length + $scope.oContact.lastName.length + $scope.oContact.telephone.length !== 0) {
-            DataFactory.bStopLoad = true;
-        }
-        else {
-            DataFactory.bStopLoad = false;
-        }
-
-        if (($scope.oContact.firstName.length + $scope.oContact.lastName.length + $scope.oContact.telephone.length !== 0 && !DataFactory.aData.bFlag)
-            || (DataFactory.bLoad)) {
-            DataFactory.aData.unshift($scope.oContact);
-            DataFactory.aData.bFlag = true;
-            DataFactory.bLoad = false;
-            DataFactory.aData.bConfirm = false;
-        }
-        else if ($scope.oContact.firstName.length + $scope.oContact.lastName.length + $scope.oContact.telephone.length === 0 && DataFactory.aData.bFlag && !DataFactory.aData.bConfirm && !DataFactory.bLoad) {
-            DataFactory.aData.shift($scope.oContact);
-            DataFactory.aData.bFlag = false;
-        }
-    }, true);
+app.controller('contactCtrl', ['$scope', function ($scope) {
 }])
     .directive('addContact', ['DataFactory', function (DataFactory) {
         return {
@@ -61,62 +33,122 @@ app.controller('contactCtrl', ['$scope', 'DataFactory', function ($scope, DataFa
                     'margin-left': '100px',
                     'margin-bottom': '10px',
                 };
-                $scope.toList = function () {
-                    if ($scope.oContact.firstName.length !== 0 && $scope.oContact.lastName.length !== 0 && $scope.oContact.telephone.length !== 0 && !DataFactory.aData.bConfirm && !DataFactory.bLoad) {
-                        DataFactory.aData.shift($scope.oContact);
-                        DataFactory.aData.unshift({
-                            firstName: $scope.oContact.firstName,
-                            lastName: $scope.oContact.lastName,
-                            telephone: $scope.oContact.telephone
-                        });
-                        DataFactory.aData.bFlag = false;
-                        DataFactory.aData.bConfirm = true;
-                        $scope.oContact.firstName = '';
-                        $scope.oContact.lastName = '';
-                        $scope.oContact.telephone = '';
-                    }
-                }
+                $scope.oContact = {
+                    firstName: '',
+                    lastName: '',
+                    telephone: ''
+                };
             },
             replace: true,
-            templateUrl: './contact.tpl'
+            templateUrl: './contact.tpl',
+            link: function (scope) {
+                scope.$watch('oContact', function () {
+                    if (scope.oContact.firstName.length + scope.oContact.lastName.length + scope.oContact.telephone.length !== 0) {
+                        DataFactory.flag[0] = true;
+                    }
+                    else {
+                        DataFactory.flag[0] = false;
+                    }
+
+                    if ((scope.oContact.firstName.length + scope.oContact.lastName.length + scope.oContact.telephone.length !== 0 && DataFactory.flag[2])
+                        || (DataFactory.flag[1])) {
+                        DataFactory.aData.unshift(scope.oContact);
+                        DataFactory.flag[1] = false;
+                        DataFactory.flag[2] = false;
+                        DataFactory.flag[3] = false;
+                    }
+                    else if (scope.oContact.firstName.length + scope.oContact.lastName.length + scope.oContact.telephone.length === 0
+                        && !DataFactory.flag[1] && !DataFactory.flag[2] && !DataFactory.flag[3]) {
+                        DataFactory.aData.shift(scope.oContact);
+                        DataFactory.flag[2] = true;
+                    }
+                }, true);
+                scope.toList = function () {
+                    if (scope.oContact.firstName.length !== 0 && scope.oContact.lastName.length !== 0 && scope.oContact.telephone.length !== 0
+                        && !DataFactory.flag[1] && !DataFactory.flag[3]) {
+                        DataFactory.aData.shift(scope.oContact);
+                        DataFactory.aData.unshift({
+                            firstName: scope.oContact.firstName,
+                            lastName: scope.oContact.lastName,
+                            telephone: scope.oContact.telephone
+                        });
+                        DataFactory.flag[2] = true;
+                        DataFactory.flag[3] = true;
+                        scope.oContact.firstName = '';
+                        scope.oContact.lastName = '';
+                        scope.oContact.telephone = '';
+                    }
+                }
+            }
         }
     }])
 
-app.controller('listCtrl', ['$scope', '$http', 'DataFactory', function ($scope, $http, DataFactory) {
-    $scope.aList = DataFactory.aData;
+app.controller('listCtrl', ['$scope', function ($scope) {
 }])
     .directive('contactList', function () {
         return {
-            controller: function ($scope) {
-                $scope.selOneline = function (evt, ind, item) {
+            restrict: 'E',
+            replace: true,
+            templateUrl: './list.tpl',
+            link: function (scope) {
+                scope.selOneline = function (evt, ind, item) {
                     var i = angular.element(document.querySelectorAll('tr')[ind]);
                     i.addClass('test');
 
                     if (confirm("Delete the selected item?")) {
-                        $scope.aList.splice($scope.aList.indexOf(item), 1);
+                        scope.aList.splice(scope.aList.indexOf(item), 1);
                     }
                     else {
                         i.removeClass('test');
                     }
                 }
-            },
-            restrict: 'E',
-            replace: true,
-            templateUrl: './list.tpl'
+            }
         }
     })
+    //.directive('btnGroup', function () {
+    //    return {
+    //        restrict: 'E',
+    //        controller: ['$scope', 'DataFactory', function ($scope, DataFactory) {
+    //            $scope.aList = DataFactory.aData;
+    //            $scope.loadList = function (evt) {
+    //                if (DataFactory.flag[0]) {
+    //                    alert('please clear the input!');
+    //                }
+    //                else {
+    //                    DataFactory.flag[1] = true;
+    //                    DataFactory.loadData().then(function (result) {
+    //                        angular.element(evt.target).attr('disabled', "true").css('backgroundColor', 'grey');
+    //                        angular.forEach(result.contacts, function (val) {
+    //                            $scope.aList.push(val);
+    //                        });
+    //                    }, function (error) {
+    //                        alert(error);
+    //                    });
+    //                }
+    //            };
+    //            $scope.saveList = function () {
+    //                alert('not finish yet');
+    //            }
+    //        }],
+    //        replace: true,
+    //        templateUrl: 'buttons.tpl'
+    //    }
+    //})
+
     .directive('btnGroup', function () {
         return {
             restrict: 'E',
             replace: true,
             controller: ['$scope', 'DataFactory', function ($scope, DataFactory) {
-                $scope.loadList = function (evt) {
-                    if (DataFactory.bStopLoad) {
+                $scope.aList = DataFactory.aData;
+                this.loadList = function (evt) {
+                    if (DataFactory.flag[0]) {
                         alert('please clear the input!');
                     }
                     else {
-                        DataFactory.bLoad = true;
+                        DataFactory.flag[1] = true;
                         DataFactory.loadData().then(function (result) {
+                            //angular.element(evt.target).attr('disabled', "true").css('backgroundColor', 'grey');
                             angular.element(evt.target).attr('disabled', "true").css('backgroundColor', 'grey');
                             angular.forEach(result.contacts, function (val) {
                                 $scope.aList.push(val);
@@ -126,10 +158,33 @@ app.controller('listCtrl', ['$scope', '$http', 'DataFactory', function ($scope, 
                         });
                     }
                 };
-                $scope.saveList = function () {
+                this.saveList = function () {
                     alert('not finish yet');
                 }
             }],
+            controllerAs: 'btnCtrl',
             templateUrl: 'buttons.tpl'
+        }
+    })
+    .directive('loadBtn', function () {
+        return {
+            restrict: 'E',
+            require:'^btnGroup',
+            replace: true,
+            template: '<button>Load</button>',
+            link: function (scope, element, attrs, btnCtrl) {
+                element.on('click', btnCtrl.loadList);
+            }
+        }
+    })
+    .directive('saveBtn', function () {
+        return {
+            restrict: 'E',
+            require:'^btnGroup',
+            replace: true,
+            template: '<button>Save</button>',
+            link: function (scope, element, attrs, btnCtrl) {
+                element.on('click', btnCtrl.saveList);
+            }
         }
     })
