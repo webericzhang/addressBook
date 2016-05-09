@@ -144,4 +144,8 @@ table td {
     label {
         width: 25%;
     }
+
+    .search {
+        margin: 10px auto;
+    }
 }
