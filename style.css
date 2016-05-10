@@ -67,6 +67,11 @@ label {
     font-weight: bold;
 }
 
+.disp {
+    width: 150px;
+    margin-left: 20px;
+}
+
 a:link, a:visited, a:hover, a:active {
     text-decoration: none;
 }

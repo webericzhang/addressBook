@@ -18,4 +18,5 @@
     <div ng-show="ctForm.tel.$error.pattern" ng-style="oErr">Please input the number!</div>
     <br>
     <button type="button" ng-click="toList()">Confirm</button>
+    <label ng-show="display" class="disp"> Confirm succeed!</label>
 </form>
