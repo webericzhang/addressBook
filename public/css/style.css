@@ -1,0 +1,162 @@
+﻿html, body, form, input {
+    font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 1em;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+}
+
+section {
+    width: 600px;
+    margin: 30px auto;
+    background-color: #B0B5E8;
+    border: 1px solid #423021;
+    box-shadow: 2px 2px 10px #666;
+    width: 460px;
+}
+
+fieldset {
+    margin: 20px 20px;
+    padding-left: 22px;
+    border-color: #2B3875;
+    position: relative;
+}
+
+legend {
+    font-weight: bold;
+    font-size: 1.25em;
+    padding: 0 5px;
+    text-shadow: 1px 1px 0px #fff;
+}
+
+button {
+    border: 1px solid #423021;
+    background-color: #063489;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    text-shadow: 1px 1px 0px #000;
+    font-size: 0.9em;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-group {
+    margin-left: 70px;
+}
+
+.btn-group button {
+    margin-left: 40px;
+}
+
+input {
+    padding-left: 4px;
+    height: 30px;
+    margin: 0 10px 10px 0;
+    border: 1px solid #423021;
+}
+
+label {
+    width: 106px;
+    margin: 10px 7px;
+    color: #2B3875;
+    display: inline-block;
+    font-weight: bold;
+}
+
+.disp {
+    width: 150px;
+    margin-left: 20px;
+}
+
+.dis {
+    width: 20px;
+    /*margin-left: 0px;*/
+}
+
+a:link, a:visited, a:hover, a:active {
+    text-decoration: none;
+}
+
+table {
+    width: 370px;
+    height: 225px;
+    display: block;
+    border: groove cadetblue 2px;
+    list-style: none;
+    overflow: auto;
+}
+
+table td {
+    height: 25px;
+    width: 120px;
+    text-align: left;
+}
+
+.search {
+    margin: 10px 90px;
+    border: 1px solid #2B3875;
+}
+
+.even {
+    background-color: darkcyan;
+}
+
+.odd {
+    background-color: cadetblue;
+}
+
+.err {
+    border-color: indianred;
+}
+
+.test {
+    background-color: indianred;
+}
+
+@media screen and (max-width: 767px) {
+    section {
+        width: 90%;
+    }
+
+    .btn-group {
+        display: block;
+        width: 100%;
+        position: static;
+        margin-left: 0px;
+    }
+
+    .btn-group button {
+        top: 0px;
+        margin: 10px auto;
+    }
+
+    button {
+        display: block;
+        width: 100%;
+        margin: 10px 0 0 0;
+    }
+
+    input {
+        width: 100%;
+    }
+
+    .list-table {
+        width: 100%;
+    }
+
+    table {
+        width: 100%;
+    }
+
+    label {
+        width: 25%;
+    }
+
+    .search {
+        margin: 10px auto;
+    }
+}
