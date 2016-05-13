@@ -6,7 +6,7 @@ app.factory('DataFactory', ['$http', '$q', function ($http, $q) {
         aData: [],
         loadData: function () {
             return $q(function (resolve, reject) {
-                $http.get('json/contactlist.json').then(function (resp) {
+                $http.get('contactList.html').then(function (resp) {
                     var result = resp.data;
                     if (result.success) {
                         resolve(result);
