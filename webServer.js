@@ -16,21 +16,20 @@ app.get('/', function (request, response) {
     response.sendFile(path.join(__dirname, '/index.html'));
 });
 
+app.route('/contactList.html')
+    .get(function (request, response) {
+        response.sendFile(path.join(__dirname, '/public/json/contactList.json'));
+    })
+    .post(function (request, response) {
+        fs.writeFile('./public/json/contactList.json', JSON.stringify(request.body), function (err) {
+            if (err) {
+                throw err;
+            } else {
+                response.send('success');
 
-app.get('/contactList.html', function (request, response) {
-    response.sendFile(path.join(__dirname, '/public/json/contactList.json'));
-});
-
-app.post('/contactList.html', function (request, response) {
-    fs.writeFile('./public/json/contactList.json', JSON.stringify(request.body), function (err) {
-        if (err) {
-            throw err;
-        } else {
-            response.send('success');
-
-        }
+            }
+        });
     });
-});
 
 app.listen(80, function () {
     console.log(`Server running at http://${hostname}:${port}/`);
